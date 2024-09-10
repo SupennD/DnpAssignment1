@@ -4,4 +4,4 @@
 
 ## Domain model
 
-![DomainModel.png](DomainModel.png)
+![Domain Model](docs/DomainModel.png)
