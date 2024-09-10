@@ -7,6 +7,11 @@ public class PostInMemoryRepository : IPostRepository
 {
     private List<Post> posts;
 
+    public PostInMemoryRepository()
+    {
+        createDummyData();
+    }
+
     public Task<Post> AddAsync(Post post)
     {
         post.Id = posts.Any()
@@ -50,5 +55,15 @@ public class PostInMemoryRepository : IPostRepository
     public IQueryable<Post> GetMany()
     {
         return posts.AsQueryable();
+    }
+
+    private void createDummyData()
+    {
+        for (var i = 0; i < 4; i++)
+        {
+            var post = new Post { Body = $"postbody{i}", Title = $"Title{i}", UserId = i };
+
+            AddAsync(post);
+        }
     }
 }
