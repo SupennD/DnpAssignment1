@@ -5,9 +5,14 @@ namespace InMemoryRepositories;
 
 public class CommentInMemoryRepository : ICommentRepository
 {
-    List<Comment> comments = new();
-    
-    public Task<Comment> AddCommentAsync(Comment comment)
+    private readonly List<Comment> comments = new();
+
+    public CommentInMemoryRepository()
+    {
+        createDummyData();
+    }
+
+    public Task<Comment> AddAsync(Comment comment)
     {
         comment.Id = comments.Any()
             ? comments.Max(c => c.Id) + 1
@@ -16,23 +21,42 @@ public class CommentInMemoryRepository : ICommentRepository
         return Task.FromResult(comment);
     }
 
-    public Task UpdateCommentAsync(Comment comment)
+
+    public Task UpdateAsync(Comment comment)
     {
-        throw new NotImplementedException();
+        var existingComment = comments.SingleOrDefault(c => c.Id == comment.Id);
+        if (existingComment is null) throw new InvalidOperationException($"Comment with ID '{comment.Id}' not found.");
+        comments.Remove(existingComment);
+        comments.Add(comment);
+        return Task.CompletedTask;
     }
 
-    public Task DeleteCommentAsync(Comment comment)
+    public Task DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        var commentToRemove = comments.SingleOrDefault(c => c.Id == id);
+        if (commentToRemove is null) throw new InvalidOperationException($"Comment with ID '{id}' not found.");
+        comments.Remove(commentToRemove);
+        return Task.CompletedTask;
     }
 
-    public Task<Comment> GetPostByIdAsync(int postId)
+    public Task<Comment> GetSingleAsync(int id)
     {
-        throw new NotImplementedException();
+        var existingComment = comments.SingleOrDefault(c => c.Id == id);
+        if (existingComment is null) throw new InvalidOperationException($"Comment with ID '{id}' not found.");
+        return Task.FromResult(existingComment);
     }
 
-    public IQueryable<Comment> GetComments()
+    public IQueryable<Comment> GetMany()
     {
-        throw new NotImplementedException();
+        return comments.AsQueryable();
+    }
+
+    private void createDummyData()
+    {
+        for (var i = 0; i < 4; i++)
+        {
+            var comment = new Comment { Body = $"Body{i}", PostId = i, UserId = i };
+            AddAsync(comment);
+        }
     }
 }
