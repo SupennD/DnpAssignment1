@@ -5,11 +5,11 @@ namespace InMemoryRepositories;
 
 public class CommentInMemoryRepository : ICommentRepository
 {
-    private readonly List<Comment> comments = new();
+    private readonly List<Comment> comments = [];
 
     public CommentInMemoryRepository()
     {
-        createDummyData();
+        CreateDummyData();
     }
 
     public Task<Comment> AddAsync(Comment comment)
@@ -17,32 +17,41 @@ public class CommentInMemoryRepository : ICommentRepository
         comment.Id = comments.Any()
             ? comments.Max(c => c.Id) + 1
             : 1;
+
         comments.Add(comment);
+
         return Task.FromResult(comment);
     }
-
 
     public Task UpdateAsync(Comment comment)
     {
         var existingComment = comments.SingleOrDefault(c => c.Id == comment.Id);
-        if (existingComment is null) throw new InvalidOperationException($"Comment with ID '{comment.Id}' not found.");
+
+        if (existingComment is null) throw new InvalidOperationException($"Comment with ID '{comment.Id}' not found");
+
         comments.Remove(existingComment);
         comments.Add(comment);
+
         return Task.CompletedTask;
     }
 
     public Task DeleteAsync(int id)
     {
-        var commentToRemove = comments.SingleOrDefault(c => c.Id == id);
-        if (commentToRemove is null) throw new InvalidOperationException($"Comment with ID '{id}' not found.");
-        comments.Remove(commentToRemove);
+        var existingComment = comments.SingleOrDefault(c => c.Id == id);
+
+        if (existingComment is null) throw new InvalidOperationException($"Comment with ID '{id}' not found");
+
+        comments.Remove(existingComment);
+
         return Task.CompletedTask;
     }
 
     public Task<Comment> GetSingleAsync(int id)
     {
         var existingComment = comments.SingleOrDefault(c => c.Id == id);
-        if (existingComment is null) throw new InvalidOperationException($"Comment with ID '{id}' not found.");
+
+        if (existingComment is null) throw new InvalidOperationException($"Comment with ID '{id}' not found");
+
         return Task.FromResult(existingComment);
     }
 
@@ -51,11 +60,12 @@ public class CommentInMemoryRepository : ICommentRepository
         return comments.AsQueryable();
     }
 
-    private void createDummyData()
+    private void CreateDummyData()
     {
         for (var i = 0; i < 4; i++)
         {
-            var comment = new Comment { Body = $"Body{i}", PostId = i, UserId = i };
+            var comment = new Comment { Body = $"Comment body {i}", PostId = i, UserId = i };
+
             AddAsync(comment);
         }
     }
