@@ -1,10 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{3BB8203B-6AD7-4533-8527-4C4F378148DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{F22F8196-53E0-4B91-BD88-74B08B2D4E42}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryContracts", "Server\RepositoryContracts\RepositoryContracts.csproj", "{E01D1561-20AF-4AF7-9D2F-5F5BD7C0B227}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemoryRepositories", "Server\InMemoryRepositories\InMemoryRepositories.csproj", "{153C0569-D6EC-44C2-B191-EFF109233E29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,6 +17,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{F22F8196-53E0-4B91-BD88-74B08B2D4E42} = {3BB8203B-6AD7-4533-8527-4C4F378148DD}
 		{E01D1561-20AF-4AF7-9D2F-5F5BD7C0B227} = {3BB8203B-6AD7-4533-8527-4C4F378148DD}
+		{153C0569-D6EC-44C2-B191-EFF109233E29} = {3BB8203B-6AD7-4533-8527-4C4F378148DD}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F22F8196-53E0-4B91-BD88-74B08B2D4E42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -24,5 +28,9 @@ Global
 		{E01D1561-20AF-4AF7-9D2F-5F5BD7C0B227}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E01D1561-20AF-4AF7-9D2F-5F5BD7C0B227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E01D1561-20AF-4AF7-9D2F-5F5BD7C0B227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{153C0569-D6EC-44C2-B191-EFF109233E29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{153C0569-D6EC-44C2-B191-EFF109233E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{153C0569-D6EC-44C2-B191-EFF109233E29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{153C0569-D6EC-44C2-B191-EFF109233E29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
