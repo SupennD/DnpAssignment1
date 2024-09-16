@@ -13,13 +13,13 @@ public class CreatePostView
     }
     public async Task ShowCreatePostViewAsync()
     {
-        Console.WriteLine("Enter title: ");
+        Console.Write("Enter title: ");
         string? title = Console.ReadLine();
 
-        Console.WriteLine("Enter body: ");
+        Console.Write("Enter body: ");
         string? body = Console.ReadLine();
 
-        Console.WriteLine("Enter userID: ");
+        Console.Write("Enter userID: ");
         int userId = Convert.ToInt32(Console.ReadLine());
 
         if (title is null || body is null)

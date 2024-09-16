@@ -6,16 +6,16 @@ namespace CLI.UI.ManagePosts;
 
 public class ListPostsView
 {
-    private readonly IPostRepository postRepository;
+    private readonly IPostRepository _postRepository;
 
     public ListPostsView(IPostRepository postRepository)
     {
-        this.postRepository = postRepository;
+        _postRepository = postRepository;
     }
 
-    public void ShowListPostView(IPostRepository postRepository)
+    public Task ShowListPostViewAsync()
     {
-        IQueryable<Post> queryablePost = postRepository.GetMany();
+        IQueryable<Post> queryablePost = _postRepository.GetMany();
 
         if (!queryablePost.Any())
         {
@@ -25,9 +25,10 @@ public class ListPostsView
 
         foreach (var post in queryablePost)
         {
-            Console.WriteLine("Id: " +post.Id + " Title: " + post.Title);
+            Console.WriteLine("Id: " + post.Id + " Title: " + post.Title);
         }
 
+        return Task.CompletedTask;
     }
-    
+
 }
