@@ -13,11 +13,11 @@ namespace CLI.UI.ManagePosts
         private readonly ListPostsView _listPostsView;
         private readonly SinglePostView _singlePostView;
         private readonly IPostRepository postRepository;
-        public ManagePostsView(CreatePostView createPostView, ListPostsView listPostsView, SinglePostView singlePostView, IPostRepository postRepository)
+        public ManagePostsView(IPostRepository postRepository)
         {
-            _createPostView = createPostView;
-            _listPostsView = listPostsView;
-            _singlePostView = singlePostView;
+            _createPostView = new CreatePostVıew(this.postRepository);
+            _listPostsView = new listPostsView(this.postRepository);
+            _singlePostView = new singlePostView(this.postRepository);
             this.postRepository = postRepository;
         }
 
