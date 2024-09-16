@@ -15,7 +15,6 @@
 
     <ItemGroup>
       <Folder Include="UI\ManageComments\" />
-      <Folder Include="UI\ManagePosts\" />
       <Folder Include="UI\ManageUsers\" />
     </ItemGroup>
 
