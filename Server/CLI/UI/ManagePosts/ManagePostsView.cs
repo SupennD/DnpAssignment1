@@ -1,6 +1,10 @@
 ﻿using System;
 using CLI.UI.ManagePosts;
 
+using InMemoryRepositories;
+
+using RepositoryContracts;
+
 namespace CLI.UI.ManagePosts
 {
     public class ManagePostsView
@@ -8,12 +12,13 @@ namespace CLI.UI.ManagePosts
         private readonly CreatePostView _createPostView;
         private readonly ListPostsView _listPostsView;
         private readonly SinglePostView _singlePostView;
-
-        public ManagePostsView(CreatePostView createPostView, ListPostsView listPostsView, SinglePostView singlePostView)
+        private readonly IPostRepository postRepository;
+        public ManagePostsView(CreatePostView createPostView, ListPostsView listPostsView, SinglePostView singlePostView, IPostRepository postRepository)
         {
             _createPostView = createPostView;
             _listPostsView = listPostsView;
             _singlePostView = singlePostView;
+            this.postRepository = postRepository;
         }
 
         public void ShowMenu()
@@ -35,10 +40,10 @@ namespace CLI.UI.ManagePosts
                 switch (choice)
                 {
                     case "1":
-                        _createPostView.CreatePost();
+                        _createPostView.ShowCreatePostView();
                         break;
                     case "2":
-                        _listPostsView.ListPosts();
+                        _listPostsView.ShowListPostView();
                         break;
                     case "3":
                         _singlePostView.ViewSinglePost();
@@ -62,7 +67,7 @@ namespace CLI.UI.ManagePosts
         private void UpdatePost()
         {
             Console.Write("Enter post ID to update: ");
-            int postId = int.Parse(Console.ReadLine());
+            int postId = Convert.ToInt32(Console.ReadLine());
 
             var post = _singlePostView.GetPostById(postId);
             if (post != null)
@@ -73,7 +78,7 @@ namespace CLI.UI.ManagePosts
                 Console.Write("Enter new body: ");
                 post.Body = Console.ReadLine();
 
-                _singlePostView.UpdatePost(post);
+                postRepository.UpdateAsync(post);
                 Console.WriteLine("Post updated successfully.");
             }
             else
@@ -85,12 +90,12 @@ namespace CLI.UI.ManagePosts
         private void DeletePost()
         {
             Console.Write("Enter post ID to delete: ");
-            int postId = int.Parse(Console.ReadLine());
+            int postId =  Convert.ToInt32(Console.ReadLine());
 
             var post = _singlePostView.GetPostById(postId);
             if (post != null)
             {
-                _singlePostView.DeletePost(postId);
+                postRepository.DeleteAsync(postId);
                 Console.WriteLine("Post deleted successfully.");
             }
             else
