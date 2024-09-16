@@ -33,7 +33,7 @@ namespace CLI.UI.ManagePosts
                 Console.WriteLine("0. Back");
                 Console.Write("Select an option: ");
 
-                string choice = Console.ReadLine();
+                string? choice = Console.ReadLine();
 
                 switch (choice)
                 {
@@ -64,33 +64,44 @@ namespace CLI.UI.ManagePosts
 
         private async Task UpdatePostAsync()
         {
-            Console.Write("\nEnter post ID to update: ");
-            int postId = Convert.ToInt32(Console.ReadLine());
-
-            Post post = await _postRepository.GetSingleAsync(postId);
-            if (post != null)
+            try
             {
+                Console.Write("\nEnter post ID to update: ");
+
+                int postId = int.Parse(Console.ReadLine() ?? throw new ArgumentException("The post ID is required."));
+                Post post = await _postRepository.GetSingleAsync(postId);
+
                 Console.Write("Enter new title: ");
-                post.Title = Console.ReadLine();
+
+                post.Title = Console.ReadLine() ?? throw new ArgumentException("The title is required.");
 
                 Console.Write("Enter new body: ");
-                post.Body = Console.ReadLine();
 
+                post.Body = Console.ReadLine() ?? throw new ArgumentException("The body is required.");
                 await _postRepository.UpdateAsync(post);
-                Console.WriteLine("\nPost updated successfully.\n");
+
+                Console.WriteLine("Post updated successfully.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
 
         private async Task DeletePostAsync()
         {
-            Console.Write("Enter post ID to delete: ");
-            int postId = Convert.ToInt32(Console.ReadLine());
-
-            Post post = await _postRepository.GetSingleAsync(postId);
-            if (post != null)
+            try
             {
+                Console.Write("\nEnter post ID to delete: ");
+
+                int postId = int.Parse(Console.ReadLine() ?? throw new ArgumentException("The post ID is required."));
                 await _postRepository.DeleteAsync(postId);
+
                 Console.WriteLine("Post deleted successfully.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Entities;
+
 using RepositoryContracts;
 
 namespace CLI.UI.ManageUsers
@@ -30,7 +31,7 @@ namespace CLI.UI.ManageUsers
                 Console.WriteLine("0. Back");
                 Console.Write("Select an option: ");
 
-                string choice = Console.ReadLine();
+                string? choice = Console.ReadLine();
 
                 switch (choice)
                 {
@@ -58,41 +59,44 @@ namespace CLI.UI.ManageUsers
 
         private async Task UpdateUserAsync()
         {
-            Console.Write("\nEnter user ID to update: ");
-            int userId = Convert.ToInt32(Console.ReadLine());
-
-            User user = await _userRepository.GetSingleAsync(userId);
-            if (user != null)
+            try
             {
+                Console.Write("\nEnter user ID to update: ");
+
+                int userId = int.Parse(Console.ReadLine() ?? throw new ArgumentException("The user ID is required."));
+                User user = await _userRepository.GetSingleAsync(userId);
+
                 Console.Write("Enter new username: ");
-                user.Name = Console.ReadLine();
+
+                user.Name = Console.ReadLine() ?? throw new ArgumentException("The name is required.");
 
                 Console.Write("Enter new email: ");
-                user.Password = Console.ReadLine();
 
+                user.Password = Console.ReadLine() ?? throw new ArgumentException("The password is required.");
                 await _userRepository.UpdateAsync(user);
-                Console.WriteLine("\nUser updated successfully.\n");
+
+                Console.WriteLine("User updated successfully.");
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine("User not found.");
+                Console.WriteLine(e.Message);
             }
         }
 
         private async Task DeleteUserAsync()
         {
-            Console.Write("Enter user ID to delete: ");
-            int userId = Convert.ToInt32(Console.ReadLine());
-
-            User user = await _userRepository.GetSingleAsync(userId);
-            if (user != null)
+            try
             {
+                Console.Write("\nEnter user ID to delete: ");
+
+                int userId = int.Parse(Console.ReadLine() ?? throw new ArgumentException("The user ID is required."));
                 await _userRepository.DeleteAsync(userId);
+
                 Console.WriteLine("User deleted successfully.");
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine("User not found.");
+                Console.WriteLine(e.Message);
             }
         }
     }

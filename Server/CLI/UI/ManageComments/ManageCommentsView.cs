@@ -1,4 +1,5 @@
 ﻿using Entities;
+
 using RepositoryContracts;
 
 namespace CLI.UI.ManageComments
@@ -30,7 +31,7 @@ namespace CLI.UI.ManageComments
                 Console.WriteLine("0. Back");
                 Console.Write("Select an option: ");
 
-                string choice = Console.ReadLine();
+                string? choice = Console.ReadLine();
 
                 switch (choice)
                 {
@@ -58,38 +59,40 @@ namespace CLI.UI.ManageComments
 
         private async Task UpdateCommentAsync()
         {
-            Console.Write("\nEnter comment ID to update: ");
-            int commentId = Convert.ToInt32(Console.ReadLine());
-
-            Comment comment = await _commentRepository.GetSingleAsync(commentId);
-            if (comment != null)
+            try
             {
+                Console.Write("\nEnter comment ID to update: ");
+
+                int commentId = int.Parse(Console.ReadLine() ?? throw new ArgumentException("The comment ID is required."));
+                Comment comment = await _commentRepository.GetSingleAsync(commentId);
+
                 Console.Write("Enter new body: ");
-                comment.Body = Console.ReadLine();
 
+                comment.Body = Console.ReadLine() ?? throw new ArgumentException("The body is required.");
                 await _commentRepository.UpdateAsync(comment);
-                Console.WriteLine("\nComment updated successfully.\n");
+
+                Console.WriteLine("Comment updated successfully.");
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine("Comment not found.");
+                Console.WriteLine(e.Message);
             }
         }
 
         private async Task DeleteCommentAsync()
         {
-            Console.Write("Enter comment ID to delete: ");
-            int commentId = Convert.ToInt32(Console.ReadLine());
-
-            Comment comment = await _commentRepository.GetSingleAsync(commentId);
-            if (comment != null)
+            try
             {
+                Console.Write("\nEnter comment ID to delete: ");
+
+                int commentId = int.Parse(Console.ReadLine() ?? throw new ArgumentException("The comment ID is required."));
                 await _commentRepository.DeleteAsync(commentId);
+
                 Console.WriteLine("Comment deleted successfully.");
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine("Comment not found.");
+                Console.WriteLine(e.Message);
             }
         }
     }
