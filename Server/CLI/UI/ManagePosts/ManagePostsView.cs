@@ -8,13 +8,13 @@ namespace CLI.UI.ManagePosts
     {
         private readonly CreatePostView _createPostView;
         private readonly ListPostsView _listPostsView;
-        // private readonly SinglePostView _singlePostView;
+        private readonly SinglePostView _singlePostView;
         private readonly IPostRepository _postRepository;
         public ManagePostsView(IPostRepository postRepository)
         {
             _createPostView = new CreatePostView(postRepository);
             _listPostsView = new ListPostsView(postRepository);
-            // _singlePostView = new singlePostView(this.postRepository);
+            _singlePostView = new SinglePostView(postRepository);
             _postRepository = postRepository;
         }
 
@@ -44,7 +44,7 @@ namespace CLI.UI.ManagePosts
                         await _listPostsView.ShowListPostViewAsync();
                         break;
                     case "3":
-                        // await _singlePostView.ViewSinglePostAsync();
+                        await _singlePostView.ViewSinglePostAsync();
                         break;
                     case "4":
                         await UpdatePostAsync();
