@@ -1,6 +1,8 @@
 ﻿using System;
 using CLI.UI.ManagePosts;
 
+using Entities;
+
 using InMemoryRepositories;
 
 using RepositoryContracts;
@@ -21,7 +23,7 @@ namespace CLI.UI.ManagePosts
             this.postRepository = postRepository;
         }
 
-        public void ShowMenu()
+        public async Task ShowMenuAsync()
         {
             bool back = false;
             while (!back)
@@ -40,19 +42,19 @@ namespace CLI.UI.ManagePosts
                 switch (choice)
                 {
                     case "1":
-                        _createPostView.ShowCreatePostView();
+                        await _createPostView.ShowCreatePostViewAsync();
                         break;
                     case "2":
-                        _listPostsView.ShowListPostView();
+                        await _listPostsView.ShowListPostViewAsync();
                         break;
                     case "3":
-                        _singlePostView.ViewSinglePost();
+                        await _singlePostView.ViewSinglePostAsync();
                         break;
                     case "4":
-                        UpdatePost();
+                        await UpdatePostAsync();
                         break;
                     case "5":
-                        DeletePost();
+                        await DeletePostAsync();
                         break;
                     case "6":
                         back = true;
@@ -64,12 +66,12 @@ namespace CLI.UI.ManagePosts
             }
         }
 
-        private void UpdatePost()
+        private async Task UpdatePostAsync()
         {
             Console.Write("Enter post ID to update: ");
             int postId = Convert.ToInt32(Console.ReadLine());
 
-            var post = _singlePostView.GetPostById(postId);
+            Post post = await postRepository.GetSingleAsync(postId);
             if (post != null)
             {
                 Console.Write("Enter new title: ");
@@ -78,29 +80,21 @@ namespace CLI.UI.ManagePosts
                 Console.Write("Enter new body: ");
                 post.Body = Console.ReadLine();
 
-                postRepository.UpdateAsync(post);
+                await postRepository.UpdateAsync(post);
                 Console.WriteLine("Post updated successfully.");
-            }
-            else
-            {
-                Console.WriteLine("Post not found.");
             }
         }
 
-        private void DeletePost()
+        private async Task DeletePostAsync()
         {
             Console.Write("Enter post ID to delete: ");
             int postId =  Convert.ToInt32(Console.ReadLine());
 
-            var post = _singlePostView.GetPostById(postId);
+            Post post = await postRepository.GetSingleAsync(postId);
             if (post != null)
             {
-                postRepository.DeleteAsync(postId);
+                await postRepository.DeleteAsync(postId);
                 Console.WriteLine("Post deleted successfully.");
-            }
-            else
-            {
-                Console.WriteLine("Post not found.");
             }
         }
     }
