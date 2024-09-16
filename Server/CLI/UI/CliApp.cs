@@ -1,3 +1,5 @@
+using CLI.UI.ManagePosts;
+
 using RepositoryContracts;
 
 namespace CLI.UI;
@@ -5,21 +7,21 @@ namespace CLI.UI;
 public class CliApp
 {
     // private ManageCommentsView _manageCommentsView;
-    // private ManagePostsView _managePostsView;
+    private readonly ManagePostsView _managePostsView;
     // private ManageUsersView _manageUsersView;
 
     public CliApp(IUserRepository userRepository, IPostRepository postRepository, ICommentRepository commentRepository)
     {
         // _manageUsersView = new ManageUsersView(userRepository);
-        // _managePostsView = new ManagePostsView(postRepository);
+        _managePostsView = new ManagePostsView(postRepository);
         // _manageCommentsView = new ManageCommentsView(commentRepository);
     }
 
-    public Task StartAsync()
+    public async Task StartAsync()
     {
-        bool running = true;
+        bool exit = false;
 
-        while (running)
+        while (!exit)
         {
             Console.WriteLine("Choose action:");
             Console.WriteLine("1. Manage users");
@@ -35,21 +37,18 @@ public class CliApp
                     // _manageUsersView.startAsync();
                     break;
                 case "2":
-                    // _managePostsView.startAsync();
+                    await _managePostsView.ShowMenuAsync();
                     break;
                 case "3":
                     // _manageCommentsView.startAsync();
                     break;
                 case "0":
-                    running = false;
+                    exit = true;
                     break;
                 default:
                     Console.WriteLine("Invalid choice, try again.");
                     break;
             }
         }
-
-
-        return Task.CompletedTask;
     }
 }
