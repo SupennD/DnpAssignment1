@@ -6,13 +6,13 @@ namespace CLI.UI.ManagePosts
 {
     public class ManagePostsView
     {
-        // private readonly CreatePostView _createPostView;
+        private readonly CreatePostView _createPostView;
         // private readonly ListPostsView _listPostsView;
         // private readonly SinglePostView _singlePostView;
         private readonly IPostRepository _postRepository;
         public ManagePostsView(IPostRepository postRepository)
         {
-            // _createPostView = new CreatePostVıew(this.postRepository);
+            _createPostView = new CreatePostView(postRepository);
             // _listPostsView = new listPostsView(this.postRepository);
             // _singlePostView = new singlePostView(this.postRepository);
             _postRepository = postRepository;
@@ -38,10 +38,12 @@ namespace CLI.UI.ManagePosts
                 switch (choice)
                 {
                     case "1":
-                        // await _createPostView.ShowCreatePostViewAsync();
+                        await _createPostView.ShowCreatePostViewAsync();
                         break;
                     case "2":
                         // await _listPostsView.ShowListPostViewAsync();
+                        var posts = _postRepository.GetMany();
+                        Console.WriteLine(string.Join(", ", posts.Select(p => p.Title).ToList()));
                         break;
                     case "3":
                         // await _singlePostView.ViewSinglePostAsync();
@@ -53,7 +55,7 @@ namespace CLI.UI.ManagePosts
                         await DeletePostAsync();
                         break;
                     case "0":
-                        back = false;
+                        back = true;
                         break;
                     default:
                         Console.WriteLine("Invalid choice, try again.");
