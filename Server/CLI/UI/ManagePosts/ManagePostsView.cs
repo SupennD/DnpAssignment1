@@ -20,7 +20,7 @@ namespace CLI.UI.ManagePosts
             _singlePostView = singlePostView;
             this.postRepository = postRepository;
         }
-//
+
         public void ShowMenu()
         {
             bool exit = false;
