@@ -23,8 +23,8 @@ namespace CLI.UI.ManagePosts
 
         public void ShowMenu()
         {
-            bool exit = false;
-            while (!exit)
+            bool back = false;
+            while (!back)
             {
                 Console.WriteLine("Manage Posts Menu:");
                 Console.WriteLine("1. Create Post");
@@ -32,7 +32,7 @@ namespace CLI.UI.ManagePosts
                 Console.WriteLine("3. View Single Post");
                 Console.WriteLine("4. Update Post");
                 Console.WriteLine("5. Delete Post");
-                Console.WriteLine("6. Exit");
+                Console.WriteLine("6. Back to Main Menu");
                 Console.Write("Select an option: ");
 
                 string choice = Console.ReadLine();
@@ -55,7 +55,7 @@ namespace CLI.UI.ManagePosts
                         DeletePost();
                         break;
                     case "6":
-                        exit = true;
+                        back = true;
                         break;
                     default:
                         Console.WriteLine("Invalid choice. Please try again.");
