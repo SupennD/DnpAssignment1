@@ -4,37 +4,39 @@ namespace FileRepositories;
 
 public abstract class GenericFileRepository<T>
 {
-  protected abstract string FilePath { get; }
-  private readonly JsonSerializerOptions _writeOptions = new()
-  {
-    WriteIndented = true
-  };
+    private readonly string _filePath;
 
-  public GenericFileRepository()
-  {
-    // Initialize the json file with an empty collection
-    if (!File.Exists(FilePath)) File.WriteAllText(FilePath, "[]");
-  }
+    private readonly JsonSerializerOptions _writeOptions = new() { WriteIndented = true };
 
-  public abstract Task<T> AddAsync(T entity);
+    protected GenericFileRepository(string path)
+    {
+        _filePath = path;
+        // Initialize the json file with an empty collection
+        if (!File.Exists(_filePath))
+        {
+            File.WriteAllText(_filePath, "[]");
+        }
+    }
 
-  public abstract Task UpdateAsync(T entity);
+    public abstract Task<T> AddAsync(T entity);
 
-  public abstract Task DeleteAsync(int id);
+    public abstract Task UpdateAsync(T entity);
 
-  public abstract Task<T> GetSingleAsync(int id);
+    public abstract Task DeleteAsync(int id);
 
-  public abstract IQueryable<T> GetMany();
+    public abstract Task<T> GetSingleAsync(int id);
 
-  protected async Task<List<T>> ReadFromJsonAsync()
-  {
-    string json = await File.ReadAllTextAsync(FilePath);
-    return JsonSerializer.Deserialize<List<T>>(json)!;
-  }
+    public abstract IQueryable<T> GetMany();
 
-  protected Task WriteToJsonAsync(List<T> value)
-  {
-    string json = JsonSerializer.Serialize(value, _writeOptions);
-    return File.WriteAllTextAsync(FilePath, json);
-  }
+    protected async Task<List<T>> ReadFromJsonAsync()
+    {
+        string json = await File.ReadAllTextAsync(_filePath);
+        return JsonSerializer.Deserialize<List<T>>(json)!;
+    }
+
+    protected Task WriteToJsonAsync(List<T> value)
+    {
+        string json = JsonSerializer.Serialize(value, _writeOptions);
+        return File.WriteAllTextAsync(_filePath, json);
+    }
 }
