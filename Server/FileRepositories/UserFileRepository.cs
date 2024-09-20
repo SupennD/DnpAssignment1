@@ -4,10 +4,8 @@ using RepositoryContracts;
 
 namespace FileRepositories;
 
-public class UserFileRepository : GenericFileRepository<User>, IUserRepository
+public class UserFileRepository : GenericFileRepository<User>("users.json"), IUserRepository
 {
-    protected override string FilePath { get; } = "users.json";
-
     public override async Task<User> AddAsync(User entity)
     {
         List<User> users = await ReadFromJsonAsync();
