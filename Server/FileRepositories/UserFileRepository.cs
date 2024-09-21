@@ -4,59 +4,54 @@ using RepositoryContracts;
 
 namespace FileRepositories;
 
-public class UserFileRepository : GenericFileRepository<User>("users.json"), IUserRepository
+public class UserFileRepository() : GenericFileRepository<User>("users.json"), IUserRepository
 {
-    public override async Task<User> AddAsync(User entity)
+    public override async Task<User> AddAsync(User user)
     {
         List<User> users = await ReadFromJsonAsync();
-        int maxId = users.Count > 0 ? users.Max(c => c.Id) + 1 : 1;
-        users.Add(entity);
+        user.Id = users.Count > 0 ? users.Max(p => p.Id) + 1 : 1;
+        users.Add(user);
         await WriteToJsonAsync(users);
-        return entity;
+        return user;
     }
 
-    public override async Task UpdateAsync(User entity)
+    public override async Task UpdateAsync(User user)
     {
         List<User> users = await ReadFromJsonAsync();
-        User? userToUpdate = users.SingleOrDefault(c => c.Id == entity.Id);
-        if (userToUpdate == null)
-        {
-            throw new InvalidOperationException($"User with ID '{entity.Id}' not found");
-        }
+        User? existingUser = users.SingleOrDefault(p => p.Id == user.Id);
 
-        users.Remove(userToUpdate);
-        users.Add(entity);
+        if (existingUser is null) throw new InvalidOperationException($"User with ID '{user.Id}' not found");
+
+        users.Remove(existingUser);
+        users.Add(user);
+
         await WriteToJsonAsync(users);
     }
 
     public override async Task DeleteAsync(int id)
     {
         List<User> users = await ReadFromJsonAsync();
-        User? userToUpdate = users.SingleOrDefault(c => c.Id == id);
-        if (userToUpdate == null)
-        {
-            throw new InvalidOperationException($"User with ID '{id}' not found");
-        }
 
-        users.Remove(userToUpdate);
+        User? existingUser = users.SingleOrDefault(u => u.Id == id);
+
+        if (existingUser is null) throw new InvalidOperationException($"User with ID '{id}' not found");
+
+        users.Remove(existingUser);
+
         await WriteToJsonAsync(users);
     }
 
     public override async Task<User> GetSingleAsync(int id)
     {
         List<User> users = await ReadFromJsonAsync();
-        User? userToUpdate = users.SingleOrDefault(c => c.Id == id);
-        if (userToUpdate == null)
-        {
-            throw new InvalidOperationException($"User with ID '{id}' not found");
-        }
-
-        return userToUpdate;
+        User? user = users.SingleOrDefault(c => c.Id == id);
+        if (user is null) throw new InvalidOperationException($"User with ID '{id}' not found");
+        return user;
     }
 
     public override IQueryable<User> GetMany()
     {
         List<User> users = ReadFromJsonAsync().Result;
-        return users.Count < 0 ? throw new InvalidOperationException("No users found ") : users.AsQueryable();
+        return users.AsQueryable();
     }
 }

@@ -10,11 +10,8 @@ public class PostFileRepository() : GenericFileRepository<Post>("posts.json"), I
     {
         List<Post> posts = await ReadFromJsonAsync();
         post.Id = posts.Count > 0 ? posts.Max(p => p.Id) + 1 : 1;
-
         posts.Add(post);
-
         await WriteToJsonAsync(posts);
-
         return post;
     }
 
@@ -23,10 +20,7 @@ public class PostFileRepository() : GenericFileRepository<Post>("posts.json"), I
         List<Post> posts = await ReadFromJsonAsync();
         Post? existingPost = posts.SingleOrDefault(p => p.Id == post.Id);
 
-        if (existingPost is null)
-        {
-            throw new InvalidOperationException($"Post with ID '{post.Id}' not found");
-        }
+        if (existingPost is null) throw new InvalidOperationException($"Post with ID '{post.Id}' not found");
 
         posts.Remove(existingPost);
         posts.Add(post);
@@ -40,10 +34,7 @@ public class PostFileRepository() : GenericFileRepository<Post>("posts.json"), I
 
         Post? existingPost = posts.SingleOrDefault(p => p.Id == id);
 
-        if (existingPost is null)
-        {
-            throw new InvalidOperationException($"Post with ID '{id}' not found");
-        }
+        if (existingPost is null) throw new InvalidOperationException($"Post with ID '{id}' not found");
 
         posts.Remove(existingPost);
 
@@ -53,21 +44,14 @@ public class PostFileRepository() : GenericFileRepository<Post>("posts.json"), I
     public override async Task<Post> GetSingleAsync(int id)
     {
         List<Post> posts = await ReadFromJsonAsync();
-
         Post? post = posts.SingleOrDefault(p => p.Id == id);
-
-        if (post is null)
-        {
-            throw new InvalidOperationException($"Post with ID '{id}' not found");
-        }
-
+        if (post is null) throw new InvalidOperationException($"Post with ID '{id}' not found");
         return post;
     }
 
     public override IQueryable<Post> GetMany()
     {
         List<Post> posts = ReadFromJsonAsync().Result;
-
         return posts.AsQueryable();
     }
 }
