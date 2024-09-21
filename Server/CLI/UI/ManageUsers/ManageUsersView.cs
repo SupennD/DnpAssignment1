@@ -76,7 +76,7 @@ public class ManageUsersView
 
             user.Name = Console.ReadLine() ?? throw new ArgumentException("The name is required.");
 
-            Console.Write("Enter new email: ");
+            Console.Write("Enter new password: ");
 
             user.Password = Console.ReadLine() ?? throw new ArgumentException("The password is required.");
             await _userRepository.UpdateAsync(user);
