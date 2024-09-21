@@ -10,8 +10,16 @@ public abstract class GenericFileRepository<T>
 
     protected GenericFileRepository(string path)
     {
-        _filePath = path;
-        // Initialize the json file with an empty collection
+        // Get the users documents folder path
+        string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+        // Store json files in the users documents folder under DNPAssignment
+        _filePath = Path.Combine(documentsPath, "DNPAssignment", path);
+
+        // Create the DNPAssignment folder if it does not exist
+        Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
+
+        // Initialize the json file with an empty collection if it does not exist
         if (!File.Exists(_filePath))
         {
             File.WriteAllText(_filePath, "[]");
