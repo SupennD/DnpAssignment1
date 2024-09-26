@@ -16,16 +16,10 @@ public class CreateUserView
     public async Task ShowCreateUserViewAsync()
     {
         Console.Write("Enter name: ");
-        string? name = Console.ReadLine();
+        string name = Console.ReadLine() ?? throw new ArgumentException("The name is required.");
 
         Console.Write("Enter password: ");
-        string? password = Console.ReadLine();
-
-
-        if (name is null || password is null)
-        {
-            return;
-        }
+        string password = Console.ReadLine() ?? throw new ArgumentException("The password is required.");
 
         User user = new() { Name = name, Password = password };
 

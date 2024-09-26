@@ -16,18 +16,13 @@ public class CreateCommentView
     public async Task ShowCreateCommentViewAsync()
     {
         Console.Write("Enter body: ");
-        string? body = Console.ReadLine();
+        string body = Console.ReadLine() ?? throw new ArgumentException("The body is required.");
 
         Console.Write("Enter postID: ");
-        int postID = Convert.ToInt32(Console.ReadLine());
+        int postID = Convert.ToInt32(Console.ReadLine() ?? throw new ArgumentException("The postID is required."));
 
         Console.Write("Enter userID: ");
-        int userId = Convert.ToInt32(Console.ReadLine());
-
-        if (body is null)
-        {
-            return;
-        }
+        int userId = Convert.ToInt32(Console.ReadLine() ?? throw new ArgumentException("The userID is required."));
 
         Comment comment = new() { Body = body, PostId = postID, UserId = userId };
 
