@@ -1,0 +1,73 @@
+@page "/register"
+@using AssignmentApp.Services
+@using DTOs
+@rendermode InteractiveServer
+@inject IUserService HttpUserService
+
+<PageTitle>Register</PageTitle>
+
+<h2>Register</h2>
+
+<form @formname="register" @onsubmit="AddUserAsync">
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert alert-danger" role="alert">@error</div>
+    }
+
+    @if (!string.IsNullOrEmpty(success))
+    {
+        <div class="alert alert-success">@success</div>
+    }
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" @bind="name">
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" @bind="password">
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+@code {
+    private string? name;
+    private string? password;
+    private string? success;
+    private string? error;
+
+    private async Task AddUserAsync()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new Exception("Please enter a name.");
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new Exception("Please enter a password");
+            }
+
+            var createUserDto = new CreateUserDto
+            {
+                Name = name,
+                Password = password
+            };
+
+            await HttpUserService.AddUserAsync(createUserDto);
+
+            success = "Registered successfully.";
+            error = null;
+            name = null;
+            password = null;
+        }
+        catch (Exception e)
+        {
+            success = null;
+            error = e.Message;
+        }
+    }
+
+}
