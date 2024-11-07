@@ -9,6 +9,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpClient<IUserService, HttpUserService>(client =>
     client.BaseAddress = new Uri("https://localhost:7047"));
+builder.Services.AddHttpClient<IPostService, HttpPostService>(client =>
+    client.BaseAddress = new Uri("https://localhost:7047"));
 
 WebApplication app = builder.Build();
 
