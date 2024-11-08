@@ -1,5 +1,8 @@
+using AssignmentApp.Auth;
 using AssignmentApp.Components;
 using AssignmentApp.Services;
+
+using Microsoft.AspNetCore.Components.Authorization;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +10,9 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddHttpClient<IUserService, HttpUserService>(client =>
-    client.BaseAddress = new Uri("https://localhost:7047"));
+builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri("https://localhost:7047") });
+builder.Services.AddScoped<IUserService, HttpUserService>();
+builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
 
 WebApplication app = builder.Build();
 
