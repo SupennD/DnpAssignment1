@@ -1,0 +1,73 @@
+@page "/comments"
+@using AssignmentApp.Services
+@using DTOs
+@rendermode InteractiveServer
+@inject ICommentService HttpCommentService
+
+<h3>Comments</h3>
+
+<form @formname="AddComment" @onsubmit="AddCommentAsync">
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert alert-danger" role="alert">@error</div>
+    }
+
+    @if (!string.IsNullOrEmpty(success))
+    {
+        <div class="alert alert-success">@success</div>
+    }
+
+    <div class="mb-3">
+        <label for="postId" class="form-label">Post ID</label>
+        <input type="text" class="form-control" id="postId" @bind="postId">
+    </div>
+    <div class="mb-3">
+        <label for="userId" class="form-label">User ID</label>
+        <input type="text" class="form-control" id="userId" @bind="userId">
+    </div>
+    <div class="mb-3">
+        <label for="body" class="form-label">Comment</label>
+        <input type="text" class="form-control" id="body" @bind="body">
+    </div>
+    <button type="submit" class="btn btn-primary">Add comment</button>
+</form>
+
+@code {
+    private int postId;
+    private int userId;
+    private string? body;
+    private string? success;
+    private string? error;
+
+    private async Task AddCommentAsync()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(body))
+            {
+                throw new Exception("Please enter a comment");
+            }
+
+            var createCommentDto = new CreateCommentDto
+            {
+                PostId = postId,
+                UserId = userId,
+                Body = body
+            };
+
+            await HttpCommentService.AddCommentAsync(createCommentDto);
+
+            success = "Comment added successfully.";
+            error = null;
+            postId = 0;
+            userId = 0;
+            body = null;
+        }
+        catch (Exception e)
+        {
+            success = null;
+            error = e.Message;
+        }
+    }
+
+}
