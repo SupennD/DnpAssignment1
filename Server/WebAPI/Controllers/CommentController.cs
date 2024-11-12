@@ -13,15 +13,23 @@ namespace WebAPI.Controllers;
 public class CommentController : ControllerBase
 {
     private readonly ICommentRepository _commentRepository;
+    private readonly IPostRepository _postRepository;
+    private readonly IUserRepository _userRepository;
 
-    public CommentController(ICommentRepository commentRepository)
+    public CommentController(ICommentRepository commentRepository, IPostRepository postRepository,
+        IUserRepository userRepository)
     {
         _commentRepository = commentRepository;
+        _postRepository = postRepository;
+        _userRepository = userRepository;
     }
 
     [HttpPost]
     public async Task<IResult> CreateAsync(CreateCommentDto commentDto)
     {
+        await _postRepository.GetSingleAsync(commentDto.PostId);
+        await _userRepository.GetSingleAsync(commentDto.UserId);
+
         Comment comment = await _commentRepository.AddAsync(new Comment
         {
             Body = commentDto.Body, UserId = commentDto.UserId, PostId = commentDto.PostId
