@@ -29,4 +29,17 @@ public class HttpUserService(HttpClient httpClient) : IUserService
     {
         throw new NotImplementedException();
     }
+    
+    public async Task<UserDto?> GetUserByIdAsync(int userId)
+    {
+        HttpResponseMessage response = await httpClient.GetAsync($"users/{userId}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        UserDto? user = await response.Content.ReadFromJsonAsync<UserDto>();
+        return user;
+    }
 }

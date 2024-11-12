@@ -4,5 +4,7 @@ namespace AssignmentApp.Services;
 
 public interface IPostService
 {
-    public Task<PostDto> AddPostAsync(CreatePostDto createPostDto);
+    Task<PostDto> AddPostAsync(CreatePostDto createPostDto);
+    Task<List<PostDto>> GetAllPostsAsync();
+    Task<PostDto?> GetPostByIdAsync(int id);
 }

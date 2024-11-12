@@ -1,0 +1,60 @@
+﻿@page "/posts"
+@using AssignmentApp.Services
+@using DTOs
+@rendermode InteractiveServer
+@inject IPostService HttpPostService
+
+<PageTitle>View Post List</PageTitle>
+
+<h2>Posts</h2>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+else if (posts == null)
+{
+    <p>Loading posts...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var post in posts)
+        {
+            <tr>
+                <td>@post.Id</td>
+                <td>@post.Title</td>
+                <td>
+                    <a href="posts/@post.Id" class="btn btn-primary">View Details</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<PostDto>? posts;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            posts = await HttpPostService.GetAllPostsAsync();
+        }
+        catch (Exception e)
+        {
+            error = $"An error occurred while loading posts: {e.Message}";
+        }
+    }
+
+}
