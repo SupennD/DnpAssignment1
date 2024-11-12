@@ -33,7 +33,7 @@ public class AuthController : ControllerBase
 
             return Results.Ok(new UserDto { Id = user.Id, Name = user.Name });
         }
-        catch (Exception _)
+        catch (Exception)
         {
             return Results.Unauthorized();
         }

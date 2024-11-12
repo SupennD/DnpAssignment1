@@ -1,14 +1,19 @@
 ﻿@page "/"
+@using AssignmentApp.Auth
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider SimpleAuthProvider
 
 <PageTitle>Home</PageTitle>
 
 <AuthorizeView>
     <Authorized>
         <h3>Hello, @context.User.Identity.Name</h3>
+        <button class="btn btn-danger" @onclick="async () => await ((SimpleAuthProvider)SimpleAuthProvider).LogoutAsync()">Log out</button>
     </Authorized>
     <NotAuthorized>
-        <button @onclick='() => NavigationManager.NavigateTo("login")'>go to login</button>
+        <h3>You are not logged in.</h3>
+        <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("login")'>Log in</button>
+        <button class="btn btn-secondary" @onclick='() => NavigationManager.NavigateTo("register")'>Register</button>
     </NotAuthorized>
 </AuthorizeView>
 

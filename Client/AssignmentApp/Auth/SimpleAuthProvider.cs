@@ -31,7 +31,7 @@ public class SimpleAuthProvider(HttpClient httpClient, IJSRuntime jsRuntime) : A
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
-    public async Task Logout()
+    public async Task LogoutAsync()
     {
         _userDto = null;
         await jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", "");
