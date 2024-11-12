@@ -1,0 +1,93 @@
+@page "/post"
+@using AssignmentApp.Services
+@using DTOs
+@rendermode InteractiveServer
+@inject IPostService _HttpPostService
+@inject IUserService _HttpUserService
+
+<PageTitle>Post</PageTitle>
+
+<h2>Create a Post</h2>
+
+<form @formname="createPost" @onsubmit="CreatePostAync">
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert-danger">@error</div>
+    }
+
+    @if (!string.IsNullOrEmpty(success))
+    {
+        <div class="alert-success">@success</div>
+    }
+
+    <div class="m-3">
+        <label for="userId" class="form-label">UserID</label>
+        <input type="text" class="form-control" id="userId" @bind="userId">
+    </div>
+    <div class="m-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" @bind="title">
+    </div>
+    <div class="m-3">
+        <label for="body" class="form-label">Body</label>
+        <input type="text" class="form-control" id="body" @bind="body">
+    </div>
+
+    <button type="submit"class="btn btn-primary">Create Post</button>
+</form>
+
+@code
+{
+    private int userId;
+    private string? title;
+    private string? body;
+    private string? success;
+    private string? error;
+
+    public async Task CreatePostAync()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(userId.ToString()) || userId <= 0)
+            {
+                throw new Exception("Please enter your userId.");
+            }
+
+            var isUser = await _HttpUserService.isValidUserAsync(userId);
+            if (isUser == false)
+            {
+                throw new Exception("User with " + userId + "can not be found");
+            }
+
+            if (string.IsNullOrEmpty(title))
+            {
+                throw new Exception("Please enter a title.");
+            }
+
+            if (string.IsNullOrEmpty(body))
+            {
+                throw new Exception("Please enter a body.");
+            }
+
+            var createPostDto = new CreatePostDto
+            {
+                Body = body,
+                Title = title,
+                UserId = userId
+            };
+
+            await _HttpPostService.AddPostAsync(createPostDto);
+            success = "Created a post successfully.";
+            error = null;
+            userId = 0;
+            title = null;
+            body = null;
+        }
+        catch (Exception e)
+        {
+            success = null;
+            error = e.Message;
+        }
+    }
+}
