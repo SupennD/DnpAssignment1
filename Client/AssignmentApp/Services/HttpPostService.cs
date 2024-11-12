@@ -1,5 +1,4 @@
 using DTOs;
-using System.Net.Http.Json;
 
 namespace AssignmentApp.Services;
 
@@ -29,5 +28,17 @@ public class HttpPostService(HttpClient httpClient) : IPostService
 
         List<PostDto>? posts = await response.Content.ReadFromJsonAsync<List<PostDto>>();
         return posts ?? new List<PostDto>();
+    }
+
+    public async Task<PostDto?> GetPostByIdAsync(int id)
+    {
+        try
+        {
+            return await httpClient.GetFromJsonAsync<PostDto>($"posts/{id}");
+        }
+        catch (HttpRequestException)
+        {
+            return null;
+        }
     }
 }
