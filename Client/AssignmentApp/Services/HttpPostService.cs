@@ -16,4 +16,17 @@ public class HttpPostService(HttpClient httpClient) : IPostService
         PostDto? result = await response.Content.ReadFromJsonAsync<PostDto>();
         return result;
     }
+    
+    public async Task<PostDto?> GetPostByIdAsync(int id)
+    {
+        try
+        {
+            
+            return await httpClient.GetFromJsonAsync<PostDto>($"posts/{id}");
+        }
+        catch (HttpRequestException)
+        {
+            return null;
+        }
+    }
 }

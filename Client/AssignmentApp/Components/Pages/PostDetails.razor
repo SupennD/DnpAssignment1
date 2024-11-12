@@ -1,0 +1,66 @@
+﻿@page "/PostDetails"
+@page "/PostDetails/{id:int}"
+@rendermode InteractiveServer
+@using AssignmentApp.Services
+@using DTOs
+@inject IPostService _HttpPostService
+@inject IUserService _HttpUserService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Post Details</PageTitle>
+
+<h1>Details Of The Selected Post</h1>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+else if (post == null)
+{
+    <p>Loading post details...</p>
+}
+else
+{
+    <p><strong>Title:</strong> @post.Title</p>
+    <p><strong>Body:</strong> @post.Body</p>
+    <p><strong>Author Name:</strong> @authorName</p>
+
+    <!-- Comments i nası yapcam bilmiyom -->
+    
+
+    <button class="btn btn-primary" @onclick="GoBack">Go Back</button>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private PostDto? post;
+    private string? authorName;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            post = await _HttpPostService.GetPostByIdAsync(id);
+            if (post == null)
+            {
+                error = "Post not found.";
+                return;
+            }
+            
+            var user = await _HttpUserService.GetUserByIdAsync(post.UserId);
+            authorName = user?.Name ?? "Unknown"; 
+        }
+        catch (Exception e)
+        {
+            error = $"An error occurred while loading the post details: {e.Message}";
+        }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/viewposts");
+    }
+}
