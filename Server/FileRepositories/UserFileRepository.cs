@@ -20,7 +20,10 @@ public class UserFileRepository() : GenericFileRepository<User>("users.json"), I
         List<User> users = await ReadFromJsonAsync();
         User? existingUser = users.SingleOrDefault(p => p.Id == user.Id);
 
-        if (existingUser is null) throw new InvalidOperationException($"User with ID '{user.Id}' not found");
+        if (existingUser is null)
+        {
+            throw new InvalidOperationException($"User with ID '{user.Id}' not found");
+        }
 
         users.Remove(existingUser);
         users.Add(user);
@@ -34,7 +37,10 @@ public class UserFileRepository() : GenericFileRepository<User>("users.json"), I
 
         User? existingUser = users.SingleOrDefault(u => u.Id == id);
 
-        if (existingUser is null) throw new InvalidOperationException($"User with ID '{id}' not found");
+        if (existingUser is null)
+        {
+            throw new InvalidOperationException($"User with ID '{id}' not found");
+        }
 
         users.Remove(existingUser);
 
@@ -45,8 +51,25 @@ public class UserFileRepository() : GenericFileRepository<User>("users.json"), I
     {
         List<User> users = await ReadFromJsonAsync();
         User? user = users.SingleOrDefault(c => c.Id == id);
-        if (user is null) throw new InvalidOperationException($"User with ID '{id}' not found");
+        if (user is null)
+        {
+            throw new InvalidOperationException($"User with ID '{id}' not found");
+        }
+
         return user;
+    }
+
+    public async Task<User> GetSingleByNameAsync(string name)
+    {
+        List<User> users = await ReadFromJsonAsync();
+        User? existingUser = users.SingleOrDefault(user => user.Name.Equals(name));
+
+        if (existingUser is null)
+        {
+            throw new InvalidOperationException($"User with Name '{name}' not found");
+        }
+
+        return existingUser;
     }
 
     public override IQueryable<User> GetMany()

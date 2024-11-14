@@ -1,7 +1,22 @@
 ﻿@page "/"
+@using AssignmentApp.Auth
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider SimpleAuthProvider
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<AuthorizeView>
+    <Authorized>
+        <div class="d-flex justify-content-between align-items-center">
+            <h3>Hi, @context?.User?.Identity?.Name</h3>
+            <button class="btn btn-danger" @onclick="async () => await ((SimpleAuthProvider)SimpleAuthProvider).LogoutAsync()">Log out</button>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h3>Hi, please log in to get access to the platform</h3>
+        <div class="d-flex align-items-center gap-3 mt-3">
+            <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("login")'>Log in</button>
+            <button class="btn btn-secondary" @onclick='() => NavigationManager.NavigateTo("register")'>Register</button>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

@@ -1,4 +1,5 @@
 using Entities;
+
 using RepositoryContracts;
 
 namespace InMemoryRepositories;
@@ -25,9 +26,12 @@ public class UserInMemoryRepository : IUserRepository
 
     public Task UpdateAsync(User user)
     {
-        var existingUser = users.SingleOrDefault(x => x.Id == user.Id);
+        User? existingUser = users.SingleOrDefault(x => x.Id == user.Id);
 
-        if (existingUser is null) throw new InvalidOperationException($"User with ID '{user.Id}' not found");
+        if (existingUser is null)
+        {
+            throw new InvalidOperationException($"User with ID '{user.Id}' not found");
+        }
 
         users.Remove(existingUser);
         users.Add(user);
@@ -37,9 +41,12 @@ public class UserInMemoryRepository : IUserRepository
 
     public Task DeleteAsync(int id)
     {
-        var existingUser = users.SingleOrDefault(x => x.Id == id);
+        User? existingUser = users.SingleOrDefault(x => x.Id == id);
 
-        if (existingUser is null) throw new InvalidOperationException($"User with ID '{id}' not found");
+        if (existingUser is null)
+        {
+            throw new InvalidOperationException($"User with ID '{id}' not found");
+        }
 
         users.Remove(existingUser);
 
@@ -48,9 +55,24 @@ public class UserInMemoryRepository : IUserRepository
 
     public Task<User> GetSingleAsync(int id)
     {
-        var existingUser = users.SingleOrDefault(x => x.Id == id);
+        User? existingUser = users.SingleOrDefault(x => x.Id == id);
 
-        if (existingUser is null) throw new InvalidOperationException($"User with ID '{id}' not found");
+        if (existingUser is null)
+        {
+            throw new InvalidOperationException($"User with ID '{id}' not found");
+        }
+
+        return Task.FromResult(existingUser);
+    }
+
+    public Task<User> GetSingleByNameAsync(string name)
+    {
+        User? existingUser = users.SingleOrDefault(user => user.Name.Equals(name));
+
+        if (existingUser is null)
+        {
+            throw new InvalidOperationException($"User with Name '{name}' not found");
+        }
 
         return Task.FromResult(existingUser);
     }
@@ -62,9 +84,9 @@ public class UserInMemoryRepository : IUserRepository
 
     private void CreateDummyData()
     {
-        for (var i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            var user = new User { Name = $"User name {i}", Password = $"Password {i}" };
+            User user = new User { Name = $"User name {i}", Password = $"Password {i}" };
 
             AddAsync(user);
         }

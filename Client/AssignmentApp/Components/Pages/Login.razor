@@ -1,0 +1,59 @@
+@page "/login"
+@using AssignmentApp.Auth
+@rendermode InteractiveServer
+@inject AuthenticationStateProvider SimpleAuthProvider
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h2>Log in</h2>
+
+        <form @onsubmit="LoginAsync">
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger" role="alert">@error</div>
+            }
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" @bind="username">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" @bind="password">
+            </div>
+            <button type="submit" class="btn btn-primary">Log in</button>
+        </form>
+    </NotAuthorized>
+    <Authorized>
+        <h2>Hello, @context?.User?.Identity?.Name</h2>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private string? username;
+    private string? password;
+    private string? error;
+
+    private async Task LoginAsync()
+    {
+        try
+        {
+            Console.WriteLine($"LoginAsync request: {username}, {password}");
+            error = "";
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                throw new Exception("Please fill in the required fields.");
+            }
+
+            await ((SimpleAuthProvider)SimpleAuthProvider).LoginAsync(username, password);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+            error = $"Error: {e.Message}";
+        }
+    }
+
+}
