@@ -48,7 +48,7 @@ public class SimpleAuthProvider(HttpClient httpClient, IJSRuntime jsRuntime) : A
             {
                 userAsJson = await jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "currentUser");
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 return new AuthenticationState(new ClaimsPrincipal());
             }

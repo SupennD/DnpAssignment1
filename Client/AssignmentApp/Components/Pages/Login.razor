@@ -8,7 +8,7 @@
     <NotAuthorized>
         <h2>Log in</h2>
 
-        <div>
+        <form @onsubmit="LoginAsync">
             @if (!string.IsNullOrEmpty(error))
             {
                 <div class="alert alert-danger" role="alert">@error</div>
@@ -22,12 +22,11 @@
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" @bind="password">
             </div>
-            <button type="submit" class="btn btn-primary" @onclick="LoginAsync">Log in</button>
-        </div>
+            <button type="submit" class="btn btn-primary">Log in</button>
+        </form>
     </NotAuthorized>
     <Authorized>
-
-        <h2>Hello, @context.User.Identity.Name</h2>
+        <h2>Hello, @context?.User?.Identity?.Name</h2>
     </Authorized>
 </AuthorizeView>
 

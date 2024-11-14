@@ -1,0 +1,153 @@
+﻿@page "/posts/{id:int}"
+@using System.Security.Claims
+@using AssignmentApp.Services
+@using DTOs
+@rendermode InteractiveServer
+@inject IPostService HttpPostService
+@inject IUserService HttpUserService
+@inject ICommentService HttpCommentService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider SimpleAuthProvider
+
+<PageTitle>Post</PageTitle>
+
+<NavLink class="btn btn-danger" href="posts">
+    Go back
+</NavLink>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+else if (post == null)
+{
+    <p>Loading post details...</p>
+}
+else
+{
+    <h1>@post.Title</h1>
+    <p class="text-secondary">Written by, @authorName.</p>
+    <p>@post.Body</p>
+    <h2>Comments</h2>
+
+    <form @formname="AddComment" @onsubmit="AddCommentAsync" class="mb-5">
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert alert-danger" role="alert">@error</div>
+        }
+
+        @if (!string.IsNullOrEmpty(success))
+        {
+            <div class="alert alert-success">@success</div>
+        }
+
+        <div class="mb-3">
+            <input type="text" placeholder="New comment..." class="form-control" id="body" @bind="body">
+        </div>
+        <button type="submit" class="btn btn-primary">Add comment</button>
+    </form>
+
+    <div class="d-flex flex-column gap-3">
+        @foreach (var comment in comments)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Comment: @comment.Id, written by: @comment.UserId</p>
+                    <p class="card-text">@comment.Body</p>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    [CascadingParameter] public required Task<AuthenticationState> State { get; set; }
+
+    private PostDto? post;
+    private List<CommentDto> comments = [];
+    private string? authorName;
+    private int userId;
+    private string? error;
+    private string? body;
+    private string? success;
+    private int postId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Get post details
+            post = await HttpPostService.GetPostByIdAsync(id);
+
+            if (post == null)
+            {
+                error = "Post not found.";
+                return;
+            }
+
+            // Get author details
+            var user = await HttpUserService.GetUserByIdAsync(post.UserId);
+            authorName = user?.Name ?? "Unknown";
+
+            // Get post comments
+            comments = await HttpCommentService.GetCommentsByPostIdAsync(post.Id);
+        }
+        catch (Exception e)
+        {
+            error = $"An error occurred while loading the post details: {e.Message}";
+        }
+
+        await GetUserAsync();
+    }
+
+    private async Task GetUserAsync()
+    {
+        var authenticationState = await State;
+        var claimsPrincipal = authenticationState.User;
+        if (claimsPrincipal.Identity is null || !claimsPrincipal.Identity.IsAuthenticated)
+        {
+            // the user is not logged in
+            return;
+        }
+
+        var claims = claimsPrincipal.Claims;
+        var userIdAsString = claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value;
+        userId = int.Parse(userIdAsString);
+    }
+
+    private async Task AddCommentAsync()
+    {
+        try
+        {
+            if (post is null)
+            {
+                throw new Exception("No post available");
+            }
+
+            if (string.IsNullOrWhiteSpace(body))
+            {
+                throw new Exception("Please enter a comment");
+            }
+
+            var createCommentDto = new CreateCommentDto
+            {
+                PostId = post.Id,
+                UserId = userId,
+                Body = body
+            };
+
+            await HttpCommentService.AddCommentAsync(createCommentDto);
+
+            success = "Comment added successfully.";
+            error = null;
+            body = null;
+        }
+        catch (Exception e)
+        {
+            success = null;
+            error = e.Message;
+        }
+    }
+
+}

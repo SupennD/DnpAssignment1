@@ -1,0 +1,59 @@
+﻿@page "/posts"
+@using AssignmentApp.Services
+@using DTOs
+@rendermode InteractiveServer
+@inject IPostService HttpPostService
+
+<PageTitle>Posts</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center">
+    <h2>Posts</h2>
+
+    <NavLink class="btn btn-primary" href="posts/create">
+        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Create Post
+    </NavLink>
+</div>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+else if (posts == null)
+{
+    <p>Loading posts...</p>
+}
+else
+{
+    <div class="row row-cols-3 gap-3">
+        @foreach (var post in posts)
+        {
+            <div class="col card">
+                <div class="card-body">
+                    <h5 class="card-title">@post.Title</h5>
+                    <p class="card-text">@post.UserId</p>
+                    <a class="btn btn-primary" href="posts/@post.Id">
+                        View details
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<PostDto>? posts;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            posts = await HttpPostService.GetAllPostsAsync();
+        }
+        catch (Exception e)
+        {
+            error = $"An error occurred while loading posts: {e.Message}";
+        }
+    }
+
+}

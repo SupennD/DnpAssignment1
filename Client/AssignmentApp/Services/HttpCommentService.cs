@@ -23,6 +23,12 @@ public class HttpCommentService(HttpClient httpClient) : ICommentService
         return result;
     }
 
+    public async Task<List<CommentDto>> GetCommentsByPostIdAsync(int postId)
+    {
+        List<CommentDto>? comments = await httpClient.GetFromJsonAsync<List<CommentDto>>("comments");
+        return comments ?? [];
+    }
+
     public async Task DeleteCommentAsync(int id)
     {
         HttpResponseMessage response = await httpClient.DeleteAsync($"comments/{id}");
