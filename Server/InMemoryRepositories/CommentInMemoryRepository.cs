@@ -6,12 +6,6 @@ namespace InMemoryRepositories;
 public class CommentInMemoryRepository : ICommentRepository
 {
     private readonly List<Comment> comments = [];
-
-    public CommentInMemoryRepository()
-    {
-        CreateDummyData();
-    }
-
     public Task<Comment> AddAsync(Comment comment)
     {
         comment.Id = comments.Any()
@@ -58,15 +52,5 @@ public class CommentInMemoryRepository : ICommentRepository
     public IQueryable<Comment> GetMany()
     {
         return comments.AsQueryable();
-    }
-
-    private void CreateDummyData()
-    {
-        for (var i = 0; i < 4; i++)
-        {
-            var comment = new Comment { Body = $"Comment body {i}", PostId = i, UserId = i };
-
-            AddAsync(comment);
-        }
     }
 }

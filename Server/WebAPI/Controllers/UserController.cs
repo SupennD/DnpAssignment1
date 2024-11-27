@@ -26,7 +26,7 @@ public class UserController : ControllerBase
         {
             Name = userDto.Name, Password = userDto.Password
         });
-        return Results.Created($"users/{createdUser.Id}", createdUser);
+        return Results.Created($"users/{createdUser.Id}", new UserDto { Id = createdUser.Id, Name = createdUser.Name });
     }
 
     [HttpGet("{id:int}")]

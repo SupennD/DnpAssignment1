@@ -3,6 +3,7 @@ using DTOs;
 using Entities;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 using RepositoryContracts;
 
@@ -13,10 +14,12 @@ namespace WebAPI.Controllers;
 public class PostController : ControllerBase
 {
     private readonly IPostRepository _postRepository;
+    private readonly IUserRepository _userRepository;
 
-    public PostController(IPostRepository postRepository)
+    public PostController(IPostRepository postRepository, IUserRepository userRepository)
     {
         _postRepository = postRepository;
+        _userRepository = userRepository;
     }
 
     [HttpPost]
@@ -24,16 +27,30 @@ public class PostController : ControllerBase
     {
         Post createdPost = await _postRepository.AddAsync(new Post
         {
-            UserId = postDto.UserId, Title = postDto.Title, Body = postDto.Body
+            User = await _userRepository.GetSingleAsync(postDto.UserId), Title = postDto.Title, Body = postDto.Body
         });
-        return Results.Created($"posts/{createdPost.Id}", createdPost);
+        return Results.Created($"posts/{createdPost.Id}",
+            new PostDto
+            {
+                Id = createdPost.Id,
+                UserId = createdPost.User.Id,
+                Title = createdPost.Title,
+                Body = createdPost.Body
+            });
     }
 
     [HttpGet("{id:int}")]
     public async Task<IResult> GetSingleAsync(int id)
     {
-        Post post = await _postRepository.GetSingleAsync(id);
-        return Results.Ok(new PostDto { Id = post.Id, UserId = post.UserId, Title = post.Title, Body = post.Body });
+        PostDto? postDto = await _postRepository
+            .GetMany()
+            .Where(p => p.Id == id)
+            .Include(p => p.User)
+            .Include(p => p.Comments)
+            .Select(p => new PostDto { Id = p.Id, UserId = p.User.Id, Title = p.Title, Body = p.Body })
+            .FirstOrDefaultAsync();
+
+        return postDto == null ? Results.NotFound() : Results.Ok(postDto);
     }
 
     [HttpGet]
@@ -43,11 +60,11 @@ public class PostController : ControllerBase
 
         if (userId is not null)
         {
-            posts = posts.Where(p => p.UserId.Equals(userId));
+            posts = posts.Where(p => p.User.Id.Equals(userId));
         }
 
         IQueryable<PostDto> postDtos =
-            posts.Select(p => new PostDto { Id = p.Id, UserId = p.UserId, Title = p.Title, Body = p.Body });
+            posts.Select(p => new PostDto { Id = p.Id, UserId = p.User.Id, Title = p.Title, Body = p.Body });
 
         return Results.Ok(postDtos);
     }
@@ -57,7 +74,10 @@ public class PostController : ControllerBase
     {
         await _postRepository.UpdateAsync(new Post
         {
-            Id = id, UserId = postDto.UserId, Title = postDto.Title, Body = postDto.Body
+            Id = id,
+            User = await _userRepository.GetSingleAsync(postDto.UserId),
+            Title = postDto.Title,
+            Body = postDto.Body
         });
         return Results.Ok();
     }
