@@ -29,10 +29,15 @@ public class CommentController : ControllerBase
     {
         Comment comment = await _commentRepository.AddAsync(new Comment
         {
-            Body = commentDto.Body, User = await _userRepository.GetSingleAsync(commentDto.UserId),
+            Body = commentDto.Body,
+            User = await _userRepository.GetSingleAsync(commentDto.UserId),
             Post = await _postRepository.GetSingleAsync(commentDto.PostId)
         });
-        return Results.Created($"comments/{comment.Id}", comment);
+        return Results.Created($"comments/{comment.Id}",
+            new CommentDto
+            {
+                Id = comment.Id, PostId = comment.Post.Id, UserId = comment.User.Id, Body = comment.Body
+            });
     }
 
     [HttpGet("{id:int}")]
@@ -68,8 +73,10 @@ public class CommentController : ControllerBase
     {
         await _commentRepository.UpdateAsync(new Comment
         {
-            Id = id, Body = commentDto.Body, User = await _userRepository.GetSingleAsync(commentDto.UserId), 
-            Post = await _postRepository.GetSingleAsync(commentDto.PostId),
+            Id = id,
+            Body = commentDto.Body,
+            User = await _userRepository.GetSingleAsync(commentDto.UserId),
+            Post = await _postRepository.GetSingleAsync(commentDto.PostId)
         });
         return Results.Ok();
     }

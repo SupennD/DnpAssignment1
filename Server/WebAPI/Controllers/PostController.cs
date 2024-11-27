@@ -26,10 +26,16 @@ public class PostController : ControllerBase
     {
         Post createdPost = await _postRepository.AddAsync(new Post
         {
-            User = await _userRepository.GetSingleAsync(postDto.UserId), 
-            Title = postDto.Title, Body = postDto.Body
+            User = await _userRepository.GetSingleAsync(postDto.UserId), Title = postDto.Title, Body = postDto.Body
         });
-        return Results.Created($"posts/{createdPost.Id}", createdPost);
+        return Results.Created($"posts/{createdPost.Id}",
+            new PostDto
+            {
+                Id = createdPost.Id,
+                UserId = createdPost.User.Id,
+                Title = createdPost.Title,
+                Body = createdPost.Body
+            });
     }
 
     [HttpGet("{id:int}")]
@@ -60,8 +66,10 @@ public class PostController : ControllerBase
     {
         await _postRepository.UpdateAsync(new Post
         {
-            Id = id, User = await _userRepository.GetSingleAsync(postDto.UserId), 
-            Title = postDto.Title, Body = postDto.Body
+            Id = id,
+            User = await _userRepository.GetSingleAsync(postDto.UserId),
+            Title = postDto.Title,
+            Body = postDto.Body
         });
         return Results.Ok();
     }
