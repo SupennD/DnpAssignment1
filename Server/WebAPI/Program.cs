@@ -1,8 +1,12 @@
+using EFCRepository;
+
 using FileRepositories;
 
 using RepositoryContracts;
 
 using WebAPI.Middlewares;
+
+using AppContext = EFCRepository.AppContext;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +17,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IUserRepository, UserFileRepository>();
-builder.Services.AddScoped<IPostRepository, PostFileRepository>();
-builder.Services.AddScoped<ICommentRepository, CommentFileRepository>();
+builder.Services.AddScoped<IUserRepository, EfcUserRepository>();
+builder.Services.AddScoped<IPostRepository, EfcPostRepository>();
+builder.Services.AddScoped<ICommentRepository, EfcCommentRepository>();
 builder.Services.AddTransient<GlobalExceptionHandlerMiddleware>();
+builder.Services.AddDbContext<AppContext>();
 
 WebApplication app = builder.Build();
 

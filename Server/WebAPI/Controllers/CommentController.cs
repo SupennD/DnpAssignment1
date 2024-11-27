@@ -27,12 +27,10 @@ public class CommentController : ControllerBase
     [HttpPost]
     public async Task<IResult> CreateAsync(CreateCommentDto commentDto)
     {
-        await _postRepository.GetSingleAsync(commentDto.PostId);
-        await _userRepository.GetSingleAsync(commentDto.UserId);
-
         Comment comment = await _commentRepository.AddAsync(new Comment
         {
-            Body = commentDto.Body, UserId = commentDto.UserId, PostId = commentDto.PostId
+            Body = commentDto.Body, User = await _userRepository.GetSingleAsync(commentDto.UserId),
+            Post = await _postRepository.GetSingleAsync(commentDto.PostId)
         });
         return Results.Created($"comments/{comment.Id}", comment);
     }
@@ -50,17 +48,17 @@ public class CommentController : ControllerBase
         IQueryable<Comment> comments = _commentRepository.GetMany();
         if (userId is not null)
         {
-            comments = comments.Where(c => c.UserId.Equals(userId));
+            comments = comments.Where(c => c.User.Equals(userId));
         }
 
         if (postId is not null)
         {
-            comments.Where(c => c.PostId.Equals(postId));
+            comments.Where(c => c.Post.Equals(postId));
         }
 
         IQueryable<CommentDto> commentDtos = comments.Select(c => new CommentDto
         {
-            Id = c.Id, Body = c.Body, UserId = c.UserId, PostId = c.PostId
+            Id = c.Id, Body = c.Body, UserId = c.User.Id, PostId = c.Post.Id
         });
         return Results.Ok(commentDtos);
     }
@@ -70,7 +68,8 @@ public class CommentController : ControllerBase
     {
         await _commentRepository.UpdateAsync(new Comment
         {
-            Id = id, Body = commentDto.Body, UserId = commentDto.UserId, PostId = commentDto.PostId
+            Id = id, Body = commentDto.Body, User = await _userRepository.GetSingleAsync(commentDto.UserId), 
+            Post = await _postRepository.GetSingleAsync(commentDto.PostId),
         });
         return Results.Ok();
     }

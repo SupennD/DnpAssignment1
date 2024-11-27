@@ -7,11 +7,7 @@ namespace InMemoryRepositories;
 public class UserInMemoryRepository : IUserRepository
 {
     private readonly List<User> users = [];
-
-    public UserInMemoryRepository()
-    {
-        CreateDummyData();
-    }
+    
 
     public Task<User> AddAsync(User user)
     {
@@ -80,15 +76,5 @@ public class UserInMemoryRepository : IUserRepository
     public IQueryable<User> GetMany()
     {
         return users.AsQueryable();
-    }
-
-    private void CreateDummyData()
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            User user = new User { Name = $"User name {i}", Password = $"Password {i}" };
-
-            AddAsync(user);
-        }
     }
 }
