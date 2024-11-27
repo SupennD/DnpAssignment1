@@ -3,6 +3,7 @@ using DTOs;
 using Entities;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 using RepositoryContracts;
 
@@ -41,8 +42,15 @@ public class PostController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IResult> GetSingleAsync(int id)
     {
-        Post post = await _postRepository.GetSingleAsync(id);
-        return Results.Ok(new PostDto { Id = post.Id, UserId = post.User.Id, Title = post.Title, Body = post.Body });
+        PostDto? postDto = await _postRepository
+            .GetMany()
+            .Where(p => p.Id == id)
+            .Include(p => p.User)
+            .Include(p => p.Comments)
+            .Select(p => new PostDto { Id = p.Id, UserId = p.User.Id, Title = p.Title, Body = p.Body })
+            .FirstOrDefaultAsync();
+
+        return postDto == null ? Results.NotFound() : Results.Ok(postDto);
     }
 
     [HttpGet]
