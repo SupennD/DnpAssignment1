@@ -29,7 +29,7 @@ public class EfcPostRepository : IPostRepository
     {
         if (!(await ctx.Posts.AnyAsync(p => p.Id == post.Id)))
         {
-            throw new CultureNotFoundException("Post with id {post.Id} not found");
+            throw new InvalidOperationException("Post with id {post.Id} not found");
         }
         ctx.Posts.Update(post);
         await ctx.SaveChangesAsync();
@@ -40,7 +40,7 @@ public class EfcPostRepository : IPostRepository
         Post? existing = await ctx.Posts.SingleOrDefaultAsync(p => p.Id == id);
         if (existing == null)
         {
-            throw new CultureNotFoundException($"Post with id {id} not found");
+            throw new InvalidOperationException($"Post with id {id} not found");
         }
 
         ctx.Posts.Remove(existing);
@@ -52,7 +52,7 @@ public class EfcPostRepository : IPostRepository
         Post? existing = await ctx.Posts.SingleOrDefaultAsync(p => p.Id == id);
         if (existing == null)
         {
-            throw new CultureNotFoundException($"Post with id {id} not found");
+            throw new InvalidOperationException($"Post with id {id} not found");
         }
         return existing;
     }

@@ -30,7 +30,7 @@ public class EfcUserRepository : IUserRepository
     {
         if (!(await ctx.Users.AnyAsync(p => p.Id == user.Id)))
         {
-            throw new CultureNotFoundException($"User with id {user.Id} not found");
+            throw new InvalidOperationException($"User with id {user.Id} not found");
 
         }
         ctx.Users.Update(user);
@@ -42,7 +42,7 @@ public class EfcUserRepository : IUserRepository
         var existing = await ctx.Users.SingleOrDefaultAsync(p => p.Id == id);
         if (existing == null)
         {
-            throw new CultureNotFoundException($"User with id {id} not found");
+            throw new InvalidOperationException($"User with id {id} not found");
 
         }
         ctx.Users.Remove(existing);
@@ -54,7 +54,7 @@ public class EfcUserRepository : IUserRepository
         var existing = await ctx.Users.SingleOrDefaultAsync(p => p.Id == id);
         if (existing == null)
         {
-            throw new CultureNotFoundException($"User with id {id} not found");
+            throw new InvalidOperationException($"User with id {id} not found");
 
         }
         return existing;
@@ -65,7 +65,7 @@ public class EfcUserRepository : IUserRepository
         var existing = await ctx.Users.SingleOrDefaultAsync(p => p.Name == name);
         if (existing == null)
         {
-            throw new CultureNotFoundException($"User with name : {name} not found");
+            throw new InvalidOperationException($"User with name : {name} not found");
 
         }
         return existing;
