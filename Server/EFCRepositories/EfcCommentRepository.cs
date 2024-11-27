@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 using RepositoryContracts;
 
-namespace EFCRe;
+namespace EFCRepository;
 
 public class EfcCommentRepository : ICommentRepository
 {
@@ -29,7 +29,7 @@ public class EfcCommentRepository : ICommentRepository
         {
             throw new InvalidOperationException($"Comment with id {comment.Id} not found");
         }
-        
+
         ctx.Comments.Update(comment);
         await ctx.SaveChangesAsync();
     }
@@ -42,7 +42,7 @@ public class EfcCommentRepository : ICommentRepository
         {
             throw new InvalidOperationException($"Comment with id {id} not found");
         }
-        
+
         ctx.Comments.Remove(existing);
         await ctx.SaveChangesAsync();
     }

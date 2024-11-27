@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 using RepositoryContracts;
 
-namespace EFCRe;
+namespace EFCRepository;
 
 public class EfcUserRepository : IUserRepository
 {
@@ -21,8 +21,8 @@ public class EfcUserRepository : IUserRepository
 
     public async Task<User> AddAsync(User user)
     {
-        EntityEntry<User> entityEntry = await ctx.Users.AddAsync(user); 
-        await ctx.SaveChangesAsync(); 
+        EntityEntry<User> entityEntry = await ctx.Users.AddAsync(user);
+        await ctx.SaveChangesAsync();
         return entityEntry.Entity;
     }
 
@@ -31,7 +31,7 @@ public class EfcUserRepository : IUserRepository
         if (!(await ctx.Users.AnyAsync(p => p.Id == user.Id)))
         {
             throw new CultureNotFoundException($"User with id {user.Id} not found");
-            
+
         }
         ctx.Users.Update(user);
         await ctx.SaveChangesAsync();
@@ -43,7 +43,7 @@ public class EfcUserRepository : IUserRepository
         if (existing == null)
         {
             throw new CultureNotFoundException($"User with id {id} not found");
-            
+
         }
         ctx.Users.Remove(existing);
         await ctx.SaveChangesAsync();

@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 using RepositoryContracts;
 
-namespace EFCRe;
+namespace EFCRepository;
 
-public class EfcPostRepository :IPostRepository
+public class EfcPostRepository : IPostRepository
 {
     private readonly AppContext ctx;
 
@@ -20,8 +20,8 @@ public class EfcPostRepository :IPostRepository
 
     public async Task<Post> AddAsync(Post post)
     {
-        EntityEntry<Post> entityEntry = await ctx.Posts.AddAsync(post); 
-        await ctx.SaveChangesAsync(); 
+        EntityEntry<Post> entityEntry = await ctx.Posts.AddAsync(post);
+        await ctx.SaveChangesAsync();
         return entityEntry.Entity;
     }
 
@@ -30,8 +30,8 @@ public class EfcPostRepository :IPostRepository
         if (!(await ctx.Posts.AnyAsync(p => p.Id == post.Id)))
         {
             throw new CultureNotFoundException("Post with id {post.Id} not found");
-        } 
-        ctx.Posts.Update(post); 
+        }
+        ctx.Posts.Update(post);
         await ctx.SaveChangesAsync();
     }
 

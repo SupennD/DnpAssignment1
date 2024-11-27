@@ -2,7 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCRe;
+namespace EFCRepository;
 
 public class AppContext : DbContext
 {

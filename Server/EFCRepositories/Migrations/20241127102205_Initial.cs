@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EFCRe.Migrations
+namespace EFCRepository.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
